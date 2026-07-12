@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>slauncher — type proof</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:wght@600&family=Bodoni+Moda:wght@800&family=Libre+Caslon+Text:wght@700&family=Space+Grotesk:wght@700&family=Archivo+Black&family=Manrope:wght@800&family=Sora:wght@800&family=Bungee&family=Monoton&family=Rubik+Mono+One&family=Righteous&family=Fredoka:wght@700&family=Bebas+Neue&family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Shadows+Into+Light&family=JetBrains+Mono:wght@500;700&family=Space+Mono:wght@700&family=IBM+Plex+Mono:wght@700&family=UnifrakturCook:wght@700&family=Pirata+One&family=Anton&family=Oswald:wght@700&family=Big+Shoulders+Display:wght@800&family=Syne:wght@800&family=Unbounded:wght@800&family=Abril+Fatface&family=DM+Serif+Display&family=Zilla+Slab:wght@700&family=Spectral:wght@700&family=Marcellus&family=Cinzel:wght@700&family=Josefin+Sans:wght@700&family=Poppins:wght@800&family=Outfit:wght@800&family=Chivo:wght@800&family=Barlow+Condensed:wght@700&family=Staatliches&family=Passion+One:wght@700&family=Permanent+Marker&family=Amatic+SC:wght@700&family=Pacifico&family=Satisfy&family=Great+Vibes&family=Comfortaa:wght@700&family=Baloo+2:wght@700&family=Press+Start+2P&family=VT323&family=Orbitron:wght@700&family=Audiowide&family=Faster+One&family=Black+Ops+One&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #e8e8e2;
+    --paper-2: #dedcd3;
+    --ink: #15161a;
+    --ink-soft: #4b4c52;
+    --proof: #e0304b;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* faint print grid */
+  .grid{
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--paper-2) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-2) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: .5;
+    pointer-events: none;
+  }
+
+  /* crop marks, corners of the proof sheet */
+  .crop{
+    position: fixed;
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+  }
+  .crop::before, .crop::after{
+    content: "";
+    position: absolute;
+    background: var(--ink);
+  }
+  .crop::before{ width: 100%; height: 1px; top: 50%; }
+  .crop::after{ height: 100%; width: 1px; left: 50%; }
+  .crop.tl{ top: 28px; left: 28px; }
+  .crop.tr{ top: 28px; right: 28px; }
+  .crop.bl{ bottom: 28px; left: 28px; }
+  .crop.br{ bottom: 28px; right: 28px; }
+
+  .frame{
+    position: fixed;
+    inset: 28px;
+    border: 1px solid var(--ink-soft);
+    opacity: .35;
+    pointer-events: none;
+  }
+
+  header.eyebrow{
+    position: fixed;
+    top: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-align: center;
+    line-height: 1.6;
+  }
+  header.eyebrow .dot{ color: var(--proof); }
+
+  footer.meta{
+    position: fixed;
+    bottom: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .stage{
+    display: flex;
+    gap: clamp(2px, 1vw, 14px);
+    align-items: flex-end;
+  }
+
+  .letter-col{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .idx{
+    font-size: 10px;
+    color: var(--proof);
+    letter-spacing: .1em;
+  }
+
+  .letter{
+    font-size: clamp(34px, 8vw, 92px);
+    line-height: 1;
+    min-width: 0.9em;
+    text-align: center;
+    transition: opacity .12s ease;
+    will-change: font-family, opacity, color;
+  }
+
+  .letter.flip{
+    opacity: .1;
+  }
+
+  .letter.knockout{
+    color: var(--paper) !important;
+    -webkit-text-stroke: 1.5px var(--ink);
+    text-stroke: 1.5px var(--ink);
+    paint-order: stroke fill;
+  }
+
+  .tag{
+    display: none;
+  }
+
+  @media (max-width: 720px){
+    .frame{ inset: 14px; }
+    .crop.tl, .crop.tr{ top: 14px; }
+    .crop.bl, .crop.br{ bottom: 14px; }
+    .crop.tl, .crop.bl{ left: 14px; }
+    .crop.tr, .crop.br{ right: 14px; }
+    header.eyebrow{ top: 24px; font-size: 9px; }
+    footer.meta{ bottom: 24px; font-size: 8px; }
+    .tag{ display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .letter{ transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="grid"></div>
+  <div class="frame"></div>
+  <div class="crop tl"></div>
+  <div class="crop tr"></div>
+  <div class="crop bl"></div>
+  <div class="crop br"></div>
+
+  <header class="eyebrow">type proof <span class="dot">·</span> live specimen<br>09 glyphs / random cycle</header>
+
+  <main class="stage" id="stage"></main>
+
+  <footer class="meta">slauncher <span style="color:var(--proof)">—</span> cubeplex launcher</footer>
+
+<script>
+  const WORD = "slauncher";
+
+  const FONTS = [
+    "'Playfair Display', serif",
+    "'Cormorant Garamond', serif",
+    "'Bodoni Moda', serif",
+    "'Libre Caslon Text', serif",
+    "'Space Grotesk', sans-serif",
+    "'Archivo Black', sans-serif",
+    "'Manrope', sans-serif",
+    "'Sora', sans-serif",
+    "'Bungee', cursive",
+    "'Monoton', cursive",
+    "'Rubik Mono One', sans-serif",
+    "'Righteous', cursive",
+    "'Fredoka', sans-serif",
+    "'Bebas Neue', sans-serif",
+    "'Caveat', cursive",
+    "'Dancing Script', cursive",
+    "'Kalam', cursive",
+    "'Shadows Into Light', cursive",
+    "'JetBrains Mono', monospace",
+    "'Space Mono', monospace",
+    "'IBM Plex Mono', monospace",
+    "'UnifrakturCook', cursive",
+    "'Pirata One', cursive",
+    "'Anton', sans-serif",
+    "'Oswald', sans-serif",
+    "'Big Shoulders Display', sans-serif",
+    "'Syne', sans-serif",
+    "'Unbounded', sans-serif",
+    "'Abril Fatface', cursive",
+    "'DM Serif Display', serif",
+    "'Zilla Slab', serif",
+    "'Spectral', serif",
+    "'Marcellus', serif",
+    "'Cinzel', serif",
+    "'Josefin Sans', sans-serif",
+    "'Poppins', sans-serif",
+    "'Outfit', sans-serif",
+    "'Chivo', sans-serif",
+    "'Barlow Condensed', sans-serif",
+    "'Staatliches', cursive",
+    "'Passion One', cursive",
+    "'Permanent Marker', cursive",
+    "'Amatic SC', cursive",
+    "'Pacifico', cursive",
+    "'Satisfy', cursive",
+    "'Great Vibes', cursive",
+    "'Comfortaa', sans-serif",
+    "'Baloo 2', cursive",
+    "'Press Start 2P', monospace",
+    "'VT323', monospace",
+    "'Orbitron', sans-serif",
+    "'Audiowide', cursive",
+    "'Faster One', cursive",
+    "'Black Ops One', cursive",
+    "'Russo One', sans-serif"
+  ];
+
+  // paso de color estilo imprenta: registros CMY + tinta clave + rojo de prueba,
+  // más "knockout" = el color del propio fondo con contorno (troquelado)
+  const COLORS = [
+    { css: "#00AEEF", label: "cian" },
+    { css: "#EC008C", label: "magenta" },
+    { css: "#E8B900", label: "amarillo" },
+    { css: "var(--ink)", label: "clave" },
+    { css: "var(--proof)", label: "rojo" },
+    { css: "knockout", label: "knockout" }
+  ];
+
+  function fontLabel(css){
+    return css.split(",")[0].replace(/'/g, "");
+  }
+
+  const stage = document.getElementById("stage");
+
+  const letters = [...WORD].map((ch, i) => {
+    const col = document.createElement("div");
+    col.className = "letter-col";
+
+    const idx = document.createElement("div");
+    idx.className = "idx";
+    idx.textContent = String(i + 1).padStart(2, "0");
+
+    const letter = document.createElement("div");
+    letter.className = "letter";
+    letter.textContent = ch;
+
+    const tag = document.createElement("div");
+    tag.className = "tag";
+
+    col.appendChild(idx);
+    col.appendChild(letter);
+    col.appendChild(tag);
+    stage.appendChild(col);
+
+    return { letter, tag };
+  });
+
+  function cycle(item){
+    const f = FONTS[Math.floor(Math.random() * FONTS.length)];
+    const c = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+    item.letter.classList.add("flip");
+    setTimeout(() => {
+      item.letter.style.fontFamily = f;
+
+      if (c.css === "knockout") {
+        item.letter.classList.add("knockout");
+      } else {
+        item.letter.classList.remove("knockout");
+        item.letter.style.color = c.css;
+      }
+
+      item.tag.textContent = c.label + " · " + fontLabel(f);
+      item.letter.classList.remove("flip");
+    }, 55);
+
+    const next = 260 + Math.random() * 380;
+    setTimeout(() => cycle(item), next);
+  }
+
+  letters.forEach((item, i) => {
+    setTimeout(() => cycle(item), i * 60);
+  });
+</script>
+</body>
+</html>
